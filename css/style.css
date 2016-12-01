@@ -1,0 +1,9 @@
+body {
+background-color: dimgrey;
+}
+
+table#Board{
+    height: auto;
+    width: auto;
+}
+
