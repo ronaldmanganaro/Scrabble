@@ -27,7 +27,6 @@ ScrabbleTiles[24] = { "letter": "y", "value": 4, "original_distribution": 2, "nu
 ScrabbleTiles[25] = { "letter": "z", "value": 10, "original_distribution": 1, "number_remaining": 1 };
 ScrabbleTiles[26] = { "letter": "", "value": 0, "original_distribution": 2, "number_remaining": 2 };
 
-
 $(document).ready(function () {
     selectPieces();
     setupBoard();
@@ -180,7 +179,7 @@ function calculateScore() {
 }
 
 function lock() {
-    $(".onboard").draggable('disable');
+   
 
     var word = "";
     var size = $(".onboard").size();
@@ -208,7 +207,19 @@ function lookup(word) {
     xhttp.onload = function () {
         if (xhttp.status == 200) {
             // Action to be performed when the document is read;
-            console.log("read");
+            console.log(xhttp.response);
+
+            var xml = xhttp.response,
+                xmlDoc = $.parseXML(xml),
+                $xml = $(xmlDoc),
+                $suggestion = $xml.find("suggestion");
+            if ($suggestion.text() !== "")
+                console.log("not a word");
+            else {
+                console.log("it is a word!");
+                 $(".onboard").draggable('disable');
+             }
+                
         }
     };
     xhttp.open("GET", xmlRequest, true);

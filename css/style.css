@@ -9,9 +9,6 @@ table {
     margin: 10px;
 }
 
-td.PlayerPiece {
-    background-image: url("images/board/tiles_empty_alt.png"); 
-}
 
 div#PlayersHand table {
     border: 1px solid burlywood;
