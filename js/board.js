@@ -1,7 +1,20 @@
 $(document).ready(function () {
+    selectPieces();
+
+    var piecesArr = JSON.parse(pieces);
+    
 
     img = "<img src='images/board/tiles_empty.png' />";
-    $('td.tiles_empty').append(img);
+    $('td.tiles_empty').append(img).droppable({
+        addClasses: true,
+        drop: function (event, ui) {
+            //$('td').closest().append(ui);
+            //$(this).droppable('disable');
+
+            //$(this).append('td').closest();
+            //$(this).append($('td').closest);
+        }
+    });
 
     img = "<img src='images/board/tiles_dl.png' />";
     $('td.tiles_dl').append(img);
@@ -21,6 +34,16 @@ $(document).ready(function () {
     img = "<img src='images/board/tiles_empty_alt.png' />";
     $('td.tiles_empty_alt').append(img);
 
-
+    $("img#PlayerPiece").draggable({
+        addClasses: false,
+        drag: function(event, ui) {
+            //ui:element being dragged
+            //event:info abt the event
+            
+        }
+    });
 });
 
+function selectPieces() {
+
+}
