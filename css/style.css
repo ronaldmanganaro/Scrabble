@@ -2,9 +2,23 @@ body {
 background-color: dimgrey;
 }
 
-table#Board{
+table {
     height: auto;
     width: auto;
+    background-color: saddlebrown;
+    margin: 10px;
 }
 
+td.PlayerPiece {
+    background-image: url("images/board/tiles_empty_alt.png"); 
+}
+
+div#PlayersHand table {
+    border: 1px solid burlywood;
+    background-color: burlywood;
+}
+
+div#PlayersHand table td{
+    border: 1px solid black;
+}
 
