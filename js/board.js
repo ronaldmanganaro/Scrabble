@@ -117,7 +117,7 @@ function setupBoard() {
         snap: '.boardTile, .rack',
         //snap: ".rack",
         snapMode: "both",
-        snapTolerance: 50,
+        snapTolerance: 70,
         drag: function (event, ui) {
 
             //ui:element being dragged
@@ -148,19 +148,19 @@ function calculateScore() {
         let temp = parseInt(onboardPieces[j].id);
         var left = right = above = below = temp;
 
-        console.log("pos: " + temp);
+        //console.log("pos: " + temp);
         left--;
-        console.log("left: " + left);
+        //console.log("left: " + left);
         right++;
-        console.log("right: " + right);
+        //console.log("right: " + right);
         above += 15;
-        console.log("top: " + above);
+        //console.log("top: " + above);
         below -= 15;
-        console.log("top: " + below);
+        //console.log("top: " + below);
         //check if first piece top touches other piece
         if (posArr.includes(left) || posArr.includes(right)
             || posArr.includes(above) || posArr.includes(below)) {
-            console.log("right match");
+            //console.log("right match");
             posOk = true;
             //console.log("Ok pos: " + onboardPieces[j].id);
         } else {
@@ -173,21 +173,31 @@ function calculateScore() {
 
     //lock in tiles if is a word
     if (posOk) {
-        lock();
+        checkWord();
 
     }
 }
 
-function lock() {
-   
+function sortById(a, b) {
+    var aId = a.id;
+    var bId = b.id; 
+    return ((aId < bId) ? -1 : ((aId > bId) ? 1 : 0));
+}
 
+function checkWord() {
     var word = "";
     var size = $(".onboard").size();
     var str = "";
     var srcArr = $("img.onboard");
-
+        
+    srcArr.sort(sortById);
+    
     for (var k = 0; k < size; k++) {
+        console.log(srcArr[k].id);
+    
+        
         str = srcArr[k].src;
+        
         var n = str.lastIndexOf('_');
         var result = str.substring(n + 1, n + 2);
         console.log(result);
@@ -207,7 +217,7 @@ function lookup(word) {
     xhttp.onload = function () {
         if (xhttp.status == 200) {
             // Action to be performed when the document is read;
-            console.log(xhttp.response);
+            //console.log(xhttp.response);
 
             var xml = xhttp.response,
                 xmlDoc = $.parseXML(xml),
@@ -217,7 +227,7 @@ function lookup(word) {
                 console.log("not a word");
             else {
                 console.log("it is a word!");
-                 $(".onboard").draggable('disable');
+                $(".onboard").draggable('disable');
              }
                 
         }
