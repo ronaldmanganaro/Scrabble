@@ -27,17 +27,21 @@ ScrabbleTiles[24] = { "letter": "y", "value": 4, "original_distribution": 2, "nu
 ScrabbleTiles[25] = { "letter": "z", "value": 10, "original_distribution": 1, "number_remaining": 1 };
 ScrabbleTiles[26] = { "letter": "", "value": 0, "original_distribution": 2, "number_remaining": 2 };
 
+var turn = 1;
 $(document).ready(function () {
     selectPieces();
     setupBoard();
 });
 
 function selectPieces() {
-    var tilecount = 0; //used to count how many tiles generated
     let tmp = 256
+    if(turn === 1)
+        $("td.PlayerPiece").addClass('empty');
 
+    var tilesNeeded = $('.empty').size();
+    //handPosEmpty = $()
     //loop 7 times
-    while (tilecount < 7) {
+    while (tilesNeeded > 0) {
         //*need to make sure player gets vowel
         //generate random number to get random tile
         var randomNum = Math.floor(Math.random() * 26)
@@ -57,8 +61,10 @@ function selectPieces() {
         var handPos = "td#" + tmp;
         //console.log(handPos);
         $(handPos).append(tilename);
+        $(handPos).addClass('full');
+        $(handPos).removeClass('empty');
         tmp++
-        tilecount++;
+        tilesNeeded--;
     }
 
 
@@ -80,13 +86,17 @@ function setupBoard() {
 
             $(ui.draggable).addClass('onboard');
             $(ui.draggable).attr("id", posOnBoard);
-
+            $(this).addClass("empty");
         }
         //out: Drag
     });
 
     $(".rack").droppable({
         accept: '.piece',
+        drop: function (event, ui) {
+             $(ui.draggable).removeClass('onboard');
+             $(this).addClass('full');
+        }
         //drop: Drop,
         //out: Drag
     });
@@ -112,14 +122,14 @@ function setupBoard() {
     img = "<img src='images/board/tiles_empty_alt.png' />";
     $('td.tiles_empty_alt').append(img);
 
+    
     $("td.PlayerPiece img").draggable({
         revert: 'invalid',
         snap: '.boardTile, .rack',
         //snap: ".rack",
         snapMode: "both",
-        snapTolerance: 70,
+        snapTolerance: 50,
         drag: function (event, ui) {
-
             //ui:element being dragged
             //event:info abt the event
             //console.log(ui);
@@ -134,53 +144,98 @@ function calculateScore() {
     //check if connected
     var onboardPieces = $(".onboard");
     var size = $(".onboard").size();
+
     var posOk = false;
     var posArr = [];
+    //sort least to greatest
+    onboardPieces.sort(sortById);
 
-    for (i = 0; i < size; i++) {
-        let value = parseInt(onboardPieces[i].id);
-        posArr.push(value);
+    //check right of the first element
+    //if theres an item to right keep checking right for others
+    //else check down if yes keep checking down 
+    //else not in right pos
+    var atStart = false;
+    for (j = 0; j < size; j++) {
+        if(turn === 1 && (parseInt(onboardPieces[j].id) === 113)) {
+            atStart = true
+        }
+        posArr.push(parseInt(onboardPieces[j].id));
+        console.log(posArr);
     }
 
-    console.log(posArr);
-
+    var isPath = 0;
     for (j = 0; j < size; j++) {
         let temp = parseInt(onboardPieces[j].id);
-        var left = right = above = below = temp;
+        var right = below = temp;
 
-        //console.log("pos: " + temp);
-        left--;
-        //console.log("left: " + left);
         right++;
-        //console.log("right: " + right);
-        above += 15;
-        //console.log("top: " + above);
         below -= 15;
-        //console.log("top: " + below);
-        //check if first piece top touches other piece
-        if (posArr.includes(left) || posArr.includes(right)
-            || posArr.includes(above) || posArr.includes(below)) {
-            //console.log("right match");
-            posOk = true;
-            //console.log("Ok pos: " + onboardPieces[j].id);
-        } else {
-            posOk = false;
-            //console.log("Not Ok pos: " + onboardPieces[j].id);
-            break;
+
+        //check if connected left->right or top->btm
+        if (isPath === 0) {
+            console.log("Choosing Path");
+            if (posArr.includes(right)) {
+                isPath = 1;
+                console.log("Chose Right Path");
+            } else if (posArr.includes(below)) {
+                isPath = 2;
+                console.log("Chose Bottom Path");
+            }
+        }
+
+        // keep checking left->right
+        if (isPath === 1) {
+            //if this is the last element
+            if (j === --size) {
+                console.log("On last element");
+                //make sure that it is connected to the second to last ele
+                posArr[--j]++ === parseInt(onboardPieces[j].id);
+                posOk = true;
+            } else {
+                if (posArr.includes(right)) {
+                    console.log("Position right ok!");
+                    posOk = true;
+                } else {
+                    console.log("Position right not ok!");
+                    posOk = false;
+                }
+            }
+        }
+
+        //keep checking top->btm
+        if (isPath === 2) {
+            if (j === --size) {
+                console.log("On last element");
+                //make sure that it is connected to the second to last ele
+                posArr[--j] -= 15 === parseInt(onboardPieces[j].id);
+                posOk = true;
+            } else {
+                if (posArr.includes(below)) {
+                    console.log("Position right not ok!");
+                    posOk = true;
+                } else {
+                    console.log("Position right not ok!");
+                    posOk = false;
+                }
+            }
         }
     }
-    console.log(posOk);
-
-    //lock in tiles if is a word
+    console.log("Position was ok? " + posOk);
+    if(turn === 1 && !atStart) {
+        posOk = false;
+        console.log("actually it aint ok first turn need element at start");
+    }
+        
     if (posOk) {
         checkWord();
 
     }
 }
 
+
 function sortById(a, b) {
     var aId = a.id;
-    var bId = b.id; 
+    var bId = b.id;
     return ((aId < bId) ? -1 : ((aId > bId) ? 1 : 0));
 }
 
@@ -189,15 +244,13 @@ function checkWord() {
     var size = $(".onboard").size();
     var str = "";
     var srcArr = $("img.onboard");
-        
+
     srcArr.sort(sortById);
-    
+
     for (var k = 0; k < size; k++) {
         console.log(srcArr[k].id);
-    
-        
         str = srcArr[k].src;
-        
+
         var n = str.lastIndexOf('_');
         var result = str.substring(n + 1, n + 2);
         console.log(result);
@@ -205,7 +258,6 @@ function checkWord() {
 
     }
     console.log("the word is: " + word);
-
     lookup(word);
     //update score
 }
@@ -228,8 +280,10 @@ function lookup(word) {
             else {
                 console.log("it is a word!");
                 $(".onboard").draggable('disable');
-             }
-                
+                turn++;
+                selectPieces();
+            }
+
         }
     };
     xhttp.open("GET", xmlRequest, true);
