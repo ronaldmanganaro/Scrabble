@@ -29,45 +29,78 @@ ScrabbleTiles[26] = { "letter": "", "value": 0, "original_distribution": 2, "num
 
 var turn = 1;
 $(document).ready(function () {
-    selectPieces();
+
     setupBoard();
+
+    selectPieces();
 });
 
+var tilesNeeded = 7;
 function selectPieces() {
-    let tmp = 256
-    if(turn === 1)
-        $("td.PlayerPiece").addClass('empty');
-
-    var tilesNeeded = $('.empty').size();
+    let tmp = 256;
+    tileid = 16;
+    var vacancies = $('.empty');
+    var handPos;
     //handPosEmpty = $()
     //loop 7 times
-    while (tilesNeeded > 0) {
-        //*need to make sure player gets vowel
+     if(turn === 1) {
+         tilesNeeded = 7;
+     } else{
+         tilesNeeded = $('.onboard').size();
+         console.log("number of tilesneeded: " + tilesNeeded);
+     }
+    $(".onboard").remove();
+    for (i = 0; tilesNeeded > 0; i++) {
         //generate random number to get random tile
-        var randomNum = Math.floor(Math.random() * 26)
-        //console.log("first gen: " + randomNum);
+        var randomNum = Math.floor(Math.random() * 27);
         //if we have no more of that tile get another random number
         while (ScrabbleTiles[randomNum].number_remaining == 0) {
             randomNum = Math.floor(Math.random() * 26)
-            //console.log("regenerated num: " + randomNum);
         }
 
         //when we find a tile with some remaining decrement it
         ScrabbleTiles[randomNum].number_remaining--;
-        //console.log("number remaining after: " + ScrabbleTiles[randomNum].number_remaining);
         //create the tile 'letter_(char).png'
         var tilename =
-            "<img src='images/tiles/letter_" + ScrabbleTiles[randomNum].letter + ".png' class='piece' />"
-        var handPos = "td#" + tmp;
-        //console.log(handPos);
+            "<img src='images/tiles/letter_" + ScrabbleTiles[randomNum].letter + ".png' class='piece' />";
+        
+        //get create td to look for
+        if(turn === 1) {
+            handPos = "td#" + tmp;
+        } else {
+            handPos = "td#" + vacancies[i].id;
+            console.log("td#" + parseInt(vacancies[i].id - 255));
+        }
+
+        
+        //add img to div
         $(handPos).append(tilename);
-        $(handPos).addClass('full');
-        $(handPos).removeClass('empty');
+        
+        //change handpos to look for div img
+        handPos += " img";
+
+        //add position on rack to the piece on the rack
+        $(handPos).addClass(tmp.toString());
+
+        //make the images draggable
+        $(handPos).draggable({
+            revert: 'invalid',
+            snap: '.boardTile, .rack',
+            snapMode: "both",
+            snapTolerance: 50,
+            drag: function (event, ui) {
+                
+            }
+        });
+
+        //move to next handpos
         tmp++
+        //one less tile needed
         tilesNeeded--;
+        //tileid is class to add to piece corresponding to rackpos
+        tileid++;
     }
-
-
+    vacancies.removeClass('empty');
 }
 
 function setupBoard() {
@@ -86,7 +119,15 @@ function setupBoard() {
 
             $(ui.draggable).addClass('onboard');
             $(ui.draggable).attr("id", posOnBoard);
-            $(this).addClass("empty");
+           
+            
+            var string = $(ui.draggable).attr("class");
+            var rackpos = parseInt(string.substring(6, 9));
+            console.log("add empty to rack pos: " + rackpos);
+            $('#' + rackpos).addClass('empty');
+           
+
+
         }
         //out: Drag
     });
@@ -94,8 +135,8 @@ function setupBoard() {
     $(".rack").droppable({
         accept: '.piece',
         drop: function (event, ui) {
-             $(ui.draggable).removeClass('onboard');
-             $(this).addClass('full');
+            $(ui.draggable).removeClass('onboard');
+            $(this).removeClass('empty');
         }
         //drop: Drop,
         //out: Drag
@@ -122,110 +163,67 @@ function setupBoard() {
     img = "<img src='images/board/tiles_empty_alt.png' />";
     $('td.tiles_empty_alt').append(img);
 
-    
-    $("td.PlayerPiece img").draggable({
-        revert: 'invalid',
-        snap: '.boardTile, .rack',
-        //snap: ".rack",
-        snapMode: "both",
-        snapTolerance: 50,
-        drag: function (event, ui) {
-            //ui:element being dragged
-            //event:info abt the event
-            //console.log(ui);
 
-        }
-    });
-
-    $('button').click(calculateScore);
+    $('button').click(checkPosition);
 }
 
-function calculateScore() {
+function checkPosition() {
     //check if connected
     var onboardPieces = $(".onboard");
     var size = $(".onboard").size();
 
-    var posOk = false;
+    var posOk = true;
     var posArr = [];
     //sort least to greatest
-    onboardPieces.sort(sortById);
+
 
     //check right of the first element
     //if theres an item to right keep checking right for others
     //else check down if yes keep checking down 
     //else not in right pos
-    var atStart = false;
+    //not needed anymore
+    var atStart = true;
+
     for (j = 0; j < size; j++) {
-        if(turn === 1 && (parseInt(onboardPieces[j].id) === 113)) {
+        if (turn === 1 && (parseInt(onboardPieces[j].id) === 8)) {
             atStart = true
         }
         posArr.push(parseInt(onboardPieces[j].id));
-        console.log(posArr);
+
+    }
+    posArr.sort(sortArr);
+    //console.log(posArr);
+    var length = posArr.length;
+    length--;
+    for (i = 0; i < length; i++) {
+        var num = i;
+        num++;
+        var next = posArr[num];
+        var prevPlusOne = posArr[i];
+        prevPlusOne++;
+        //console.log(posArr);
+        //console.log("next :" + next);
+        //console.log("prev :" + prevPlusOne);
+
+
+        if (next === prevPlusOne) {
+            posOk = true;
+
+        } else {
+            posOk = false;
+            console.log("not connected");
+            break;
+        }
+
     }
 
-    var isPath = 0;
-    for (j = 0; j < size; j++) {
-        let temp = parseInt(onboardPieces[j].id);
-        var right = below = temp;
 
-        right++;
-        below -= 15;
-
-        //check if connected left->right or top->btm
-        if (isPath === 0) {
-            console.log("Choosing Path");
-            if (posArr.includes(right)) {
-                isPath = 1;
-                console.log("Chose Right Path");
-            } else if (posArr.includes(below)) {
-                isPath = 2;
-                console.log("Chose Bottom Path");
-            }
-        }
-
-        // keep checking left->right
-        if (isPath === 1) {
-            //if this is the last element
-            if (j === --size) {
-                console.log("On last element");
-                //make sure that it is connected to the second to last ele
-                posArr[--j]++ === parseInt(onboardPieces[j].id);
-                posOk = true;
-            } else {
-                if (posArr.includes(right)) {
-                    console.log("Position right ok!");
-                    posOk = true;
-                } else {
-                    console.log("Position right not ok!");
-                    posOk = false;
-                }
-            }
-        }
-
-        //keep checking top->btm
-        if (isPath === 2) {
-            if (j === --size) {
-                console.log("On last element");
-                //make sure that it is connected to the second to last ele
-                posArr[--j] -= 15 === parseInt(onboardPieces[j].id);
-                posOk = true;
-            } else {
-                if (posArr.includes(below)) {
-                    console.log("Position right not ok!");
-                    posOk = true;
-                } else {
-                    console.log("Position right not ok!");
-                    posOk = false;
-                }
-            }
-        }
-    }
     console.log("Position was ok? " + posOk);
-    if(turn === 1 && !atStart) {
+    if (turn === 1 && !atStart) {
         posOk = false;
         console.log("actually it aint ok first turn need element at start");
     }
-        
+
     if (posOk) {
         checkWord();
 
@@ -233,19 +231,23 @@ function calculateScore() {
 }
 
 
+function sortArr(a, b) {
+
+    return (a - b);
+}
+
 function sortById(a, b) {
-    var aId = a.id;
-    var bId = b.id;
-    return ((aId < bId) ? -1 : ((aId > bId) ? 1 : 0));
+
+    return (a.id - b.id);
 }
 
 function checkWord() {
     var word = "";
     var size = $(".onboard").size();
     var str = "";
-    var srcArr = $("img.onboard");
+    var srcArr = $(".onboard");
 
-    srcArr.sort(sortById);
+    console.log(srcArr.sort(sortById));
 
     for (var k = 0; k < size; k++) {
         console.log(srcArr[k].id);
@@ -253,6 +255,10 @@ function checkWord() {
 
         var n = str.lastIndexOf('_');
         var result = str.substring(n + 1, n + 2);
+        if (result === '.') {
+            //could ask player for letter they want to use
+            result = ' ';
+        }
         console.log(result);
         word += (result);
 
@@ -279,15 +285,74 @@ function lookup(word) {
                 console.log("not a word");
             else {
                 console.log("it is a word!");
-                $(".onboard").draggable('disable');
+                $("img.onboard").draggable('disable');
+                calculateScore(word);
                 turn++;
                 selectPieces();
             }
 
-        }
+        } else
+            console.log("error api call");
     };
     xhttp.open("GET", xmlRequest, true);
     xhttp.send(null);
 }
 
+var totalScore = 0;
+    
+function calculateScore(word) {
+
+    var onboardPieces = $(".onboard");
+    var posArr = [];
+    var size = $(".onboard").size();
+    var tw = false;
+    var dlAt4 = false;
+    var dlAt12 = false;
+    for (j = 0; j < size; j++) {
+        posArr.push(parseInt(onboardPieces[j].id));
+    }
+
+    posArr.sort(sortArr);
+    for (j = 0; j < size; j++) {
+        if (posArr[j] === 1 || posArr[j] === 15) {
+            var dw = true;
+        } else if (posArr[j] === 4) {
+            var dlAt4 = j;
+            
+        } else if (posArr[j] === 12) {
+            var dlAt12 = j;
+
+        }
+
+    }
+
+    var score = 0;
+
+    for (i = 0; i < word.length; i++) {
+        var character = word[i];
+        var value = 0;
+        for (j = 0; j <= 26; j++) {
+            if (ScrabbleTiles[j].letter === character) {
+                value = ScrabbleTiles[j].value;
+                break;
+            }
+        }
+        console.log("The score was: " + score);  
+        if (dlAt4 === i)
+            score += value
+        if (dlAt12 === i )
+            score += value;
+          
+        score += value;
+        console.log("The score is: " + score);
+    }
+    if (dw)
+        score *= 3;
+
+        totalScore += score;
+    $('h2').text("Score: " + totalScore);
+
+    
+    
+}
 
