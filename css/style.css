@@ -1,7 +1,20 @@
+/*
+Ronald Manganaro(c) copyright 2016
+Email: ronald_manganaro@student.uml.edu
+COMP 3010 - 201 GUI Programming I
+Assignment 9
+Ronald Manganaro, Umass Lowell Computer Science
+Date: December 6, 2016 
+Description: Bare bones css file because I am not 
+very creative
+*/
+
+/* background of the body is my favorite color */
 body {
-background-color: dimgrey;
+background-color: forestgreen;
 }
 
+/* tried to find a wood color */
 table {
     height: auto;
     width: auto;
@@ -9,12 +22,23 @@ table {
     margin: 40px;
 }
 
+/* Title on top of webpage */
+h1 {
+    font-size: 300%;
+}
 
+/* Player score is h2 */
+h2 {
+    font-size: 200%;
+}
+
+/* Tried to make the board look like it was made of wood */
 div#PlayersHand table {
     border: 1px solid burlywood;
     background-color: burlywood;
 }
 
+/* rack is a lighter brown */
 div#PlayersHand table td{
     border: 1px solid black;
 }

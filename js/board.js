@@ -1,3 +1,24 @@
+/*
+Ronald Manganaro(c) copyright 2016
+Email: ronald_manganaro@student.uml.edu
+COMP 3010 - 201 GUI Programming I
+Assignment 9
+Ronald Manganaro, Umass Lowell Computer Science
+Date: December 6, 2016 
+Description: 
+Functions
+selectPieces : On first term will fill the players hand with 7 tiles.
+setupBoard : appends images to the board.
+checkPosition : makes sure that tiles are all connected
+checkWord : Compiles the word from the letters on the board.
+lookup : Was used to lookup the word using merriam webster api, but 
+only work locally and required me to disable web security on chrome. 
+Took out the code related to checking if the word is indeed a word, but
+since it was not in the rubric I am gonna leave it out.
+calculateScore : calculates the score,
+newHand : check what tiles have been used and then refreshes the players hand.
+*/
+
 var ScrabbleTiles = []; // Global variable used to hold the tiles
 ScrabbleTiles[0] = { "letter": "a", "value": 1, "original_distribution": 9, "number_remaining": 9 };
 ScrabbleTiles[1] = { "letter": "b", "value": 3, "original_distribution": 2, "number_remaining": 2 };
@@ -36,9 +57,9 @@ $(document).ready(function () {
 });
 
 function selectPieces() {
-    var tmp = 256;
-    var tilesNeeded = 7;
-    var handPos;
+    var tmp = 256; // 256 is id number for first position on rack
+    var tilesNeeded = 7; // players start off with 7 tiles
+    var handPos; // position to put the tile into
 
     // gives the player 7 tiles
     for (i = 0; tilesNeeded > 0; i++) {
@@ -51,9 +72,9 @@ function selectPieces() {
 
         //when we find a tile with some remaining decrement it
         ScrabbleTiles[randomNum].number_remaining--;
+
         //create the tile 'letter_(char).png'
-        var tilename =
-            "<img src='images/tiles/letter_" + ScrabbleTiles[randomNum].letter + ".png' class='piece' />";
+        var tilename = "<img src='images/tiles/letter_" + ScrabbleTiles[randomNum].letter + ".png' class='piece' />";
 
         // get correct position in players hand 
         handPos = "td#" + tmp;
@@ -128,12 +149,6 @@ function setupBoard() {
     img = "<img src='images/board/tiles_dl.png' />";
     $('td.tiles_dl').append(img);
 
-    img = "<img src='images/board/tiles_dw.png' />";
-    $('td.tiles_dw').append(img);
-
-    img = "<img src='images/board/tiles_tl.png' />";
-    $('td.tiles_tl').append(img);
-
     img = "<img src='images/board/tiles_tw.png' />";
     $('td.tiles_tw').append(img);
 
@@ -198,12 +213,13 @@ function sortById(a, b) {
 }
 
 function checkWord() {
-    var word = "";
-    var size = $(".onboard").size();
+    var word = ""; // stores concatenated word
+    var size = $(".onboard").size(); // how many pieces on the board 
     var str = "";
     var srcArr = $(".onboard");
 
     for (var k = 0; k < size; k++) {
+        // grabs source name and finds delimeter
         str = srcArr[k].src;
         var n = str.lastIndexOf('_');
         var result = str.substring(n + 1, n + 2);
@@ -212,92 +228,43 @@ function checkWord() {
         if (result === '.') {
             result = ' ';
         }
-        console.log(result);
+        // add character found to the word 
         word += (result);
     }
     lookup(word);
 }
 
 function lookup(word) {
-
+    // locks pieces in place 
     $("img.onboard").draggable('disable');
+
+    // calculates the score and refreshes the players hand
     calculateScore(word);
     turn++;
     newHand();
-    
-    /* ALL THIS CODE ONLY WORKS ON MY LOCAL MACHINE 
-    var apikey = "6574d3d5-aa7a-4a8a-9063-e312b096015f";
-    var xmlRequest = "https://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + word + "?key=" + apikey;
-    var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + xmlRequest + '"') + '&format=xml&callback=?';
-
-    // Request that YSQL string, and run a callback function.
-    // Pass a defined function to prevent cache-busting.
-    $.getJSON(yql, function (data) {
-
-        // the code you're looking for
-        var found = false;
-        var results = [];
-        var searchField = "suggestion";
-        var searchVal = "my Name";
-        // iterate over each element in the array
-        for (var i = 0; i < data.list.length; i++) {
-            if (data.list[i][searchField] === "") {
-                results.push(obj.list[i]);
-                found = true;
-            } else {
-                console.log("it is a word!");
-                $("img.onboard").draggable('disable');
-                calculateScore(word);
-                turn++;
-                newHand();
-            }
-        }
-    });
-
-    /*
-     xhttp.onload = function () {
-         if (xhttp.status == 200) {
-            var xml = xhttp.response,
-                xmlDoc = $.parseXML(xml),
-                $xml = $(xmlDoc),
-                $suggestion = $xml.find("suggestion");
-            if ($suggestion.text() !== "")
-                console.log("not a word");
-            else {
-                console.log("it is a word!");
-                $("img.onboard").draggable('disable');
-                calculateScore(word);
-                turn++;
-                newHand();
-            }
-        }
-        
-             
-         } else
-             console.log("error api call");
-     };
-     xhttp.open("GET", xmlRequest, true);
-     xhttp.send(null);
-     */
 }
 
-var totalScore = 0;
-
+var totalScore = 0; // global so it doesnt get overwridden
 function calculateScore(word) {
-    var onboardPieces = $(".onboard");
-    var posArr = [];
-    var size = $(".onboard").size();
-    var tw = false;
-    var dlAt4 = false;
-    var dlAt12 = false;
+    var onboardPieces = $(".onboard"); // Used to get id's which represent location of tiles
+    var posArr = []; // will store ids
+    var size = $(".onboard").size(); // how many pieces on the board
+    var tw = false; // boolean to tell if a tile is on a triple word
+    var dlAt4 = false; // boolean to tell if a tile is on the first dl tile
+    var dlAt12 = false; // // boolean to tell if a tile is on the second dl tile
+
+    // add the position of tiles to an array
     for (j = 0; j < size; j++) {
         posArr.push(parseInt(onboardPieces[j].id));
     }
 
+    // sorts the position least to greatest
     posArr.sort(sortArr);
+
+    // checks if tiles are on a bonus tile
     for (j = 0; j < size; j++) {
         if (posArr[j] === 1 || posArr[j] === 15) {
-            var dw = true;
+            tw = true;
         } else if (posArr[j] === 4) {
             var dlAt4 = j;
         } else if (posArr[j] === 12) {
@@ -305,48 +272,52 @@ function calculateScore(word) {
         }
     }
 
-    var score = 0;
+    var score = 0; // holds score for one round
+
+    // calculates the score
     for (i = 0; i < word.length; i++) {
-        var character = word[i];
-        var value = 0;
+        var character = word[i]; // gets one character from the word at a time
+        var value = 0; // stores the value of a tile
+
+        // get the value or character by matching to tiles array
         for (j = 0; j <= 26; j++) {
+            // if they match store the value
             if (ScrabbleTiles[j].letter === character) {
                 value = ScrabbleTiles[j].value;
                 break;
             }
         }
-        console.log("The score was: " + score);
+        // if one of the bonus tile add to the score again
         if (dlAt4 === i)
             score += value
         if (dlAt12 === i)
             score += value;
 
+        // always adds score to the value
         score += value;
-        console.log("The score is: " + score);
     }
-    if (dw)
+    // multiply the score if on tw tile
+    if (tw)
         score *= 3;
 
+    // updates the score text
     totalScore += score;
     $('h2').text("Score: " + totalScore);
 }
 
 function newHand() {
-    var onboardPieces = $(".onboard");
-    var size = $('.onboard').length;
-    var rackpos;
-
-    console.log("the size is: " + size);
+    var onboardPieces = $(".onboard"); // get the old pieces on the board
+    var size = $('.onboard').length; // save the size so can iterate through allthem
+    var rackpos; // position in the rack that needs to be filled
 
     for (i = 0; i < size; i++) {
-
-        console.log("missing tiles class: " + onboardPieces[i].className);
+        // removes the old images from the rack
         rackpos = parseInt(onboardPieces[i].className.substring(6, 9));
-        console.log(rackpos);
         $("#" + rackpos + " img").remove();
 
         //generate random number to get random tile
         var randomNum = Math.floor(Math.random() * 27);
+
         //if we have no more of that tile get another random number
         while (ScrabbleTiles[randomNum].number_remaining == 0) {
             randomNum = Math.floor(Math.random() * 26)
@@ -354,23 +325,24 @@ function newHand() {
 
         //when we find a tile with some remaining decrement it
         ScrabbleTiles[randomNum].number_remaining--;
+
         //create the tile 'letter_(char).png'
         var tilename =
             "<img src='images/tiles/letter_" + ScrabbleTiles[randomNum].letter + ".png' class='piece' />";
 
+        // appends the image to the rack
         $("#" + rackpos).append(tilename);
 
-        //add position on rack to the piece on the rack
+        // add position on rack to the piece on the rack
         $("#" + rackpos + " img").addClass(rackpos.toString());
 
-        //make the images draggable
+        // make the images draggable
         $("#" + rackpos + " img").draggable({
             revert: 'invalid',
             snap: '.boardTile, .rack',
             snapMode: "both",
             snapTolerance: 50,
             drag: function (event, ui) {
-
             }
         });
     }

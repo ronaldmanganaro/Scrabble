@@ -5,9 +5,15 @@ Email: ronald_manganaro@student.uml.edu
 COMP 3010 - 201 GUI Programming I
 Assignment 9
 Ronald Manganaro, Umass Lowell Computer Science
-Date: 
-Description: 
+Date: December 6, 2016 
+Description: Create a table to hold the row elements. 
+The classes are checked in the javascript and the appropriate
+images is appended to each td in the table. The button 
+first checks if the tiles are in valid positions. When the
+html document is loaded then the board is setup and the 
+players hand is randonly selected.
 -->
+
 <html lang="en">
 
 <head>
@@ -30,135 +36,13 @@ Description:
 		<hr>
 	</header>
 
+	<!-- h2 holds the score and button sets off the checkPosition -->	
 	<h2>Score: </h2>
 	<button type="button">Save Word</button>
 
+	<!-- table that holds a row of the board -->
 	<div id="Board">
 		<table>
-			<!-- 
-			<tr>
-				<td class="tiles_tw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tw"></td>
-			</tr>
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-
-			<tr>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-			</tr>
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-			<tr>
-
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-			-->
 			<tr>
 				<td class="tiles_tw"></td>
 				<td class="tiles_empty"></td>
@@ -176,135 +60,10 @@ Description:
 				<td class="tiles_empty"></td>
 				<td class="tiles_tw"></td>
 			</tr>
-			<!--
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-
-			<tr>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-			</tr>
-
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-
-			<tr>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dw"></td>
-				<td class="tiles_empty"></td>
-			</tr>
-
-			<tr>
-				<td class="tiles_tw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tw"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_dl"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_empty"></td>
-				<td class="tiles_tw"></td>
-			</tr>
-			-->
 		</table>
 	</div>
 
+	<!-- players hand or rack table -->
 	<div id="PlayersHand">
 		<table>
 			<tr>
@@ -320,7 +79,6 @@ Description:
 	</div>
 
 	<script type="text/javascript" src="js/board.js"></script>
-
 </body>
 
 </html>
