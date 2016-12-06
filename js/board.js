@@ -29,27 +29,15 @@ ScrabbleTiles[26] = { "letter": "", "value": 0, "original_distribution": 2, "num
 
 var turn = 1;
 $(document).ready(function () {
-
     setupBoard();
-
     selectPieces();
 });
 
-var tilesNeeded = 7;
 function selectPieces() {
-    let tmp = 256;
-    tileid = 16;
-    var vacancies = $('.empty');
+    var tmp = 256;
+    var tilesNeeded = 7;
     var handPos;
-    //handPosEmpty = $()
-    //loop 7 times
-     if(turn === 1) {
-         tilesNeeded = 7;
-     } else{
-         tilesNeeded = $('.onboard').size();
-         console.log("number of tilesneeded: " + tilesNeeded);
-     }
-    $(".onboard").remove();
+
     for (i = 0; tilesNeeded > 0; i++) {
         //generate random number to get random tile
         var randomNum = Math.floor(Math.random() * 27);
@@ -63,19 +51,13 @@ function selectPieces() {
         //create the tile 'letter_(char).png'
         var tilename =
             "<img src='images/tiles/letter_" + ScrabbleTiles[randomNum].letter + ".png' class='piece' />";
-        
-        //get create td to look for
-        if(turn === 1) {
-            handPos = "td#" + tmp;
-        } else {
-            handPos = "td#" + vacancies[i].id;
-            console.log("td#" + parseInt(vacancies[i].id - 255));
-        }
 
-        
+        //get create td to look for
+        handPos = "td#" + tmp;
+
         //add img to div
         $(handPos).append(tilename);
-        
+
         //change handpos to look for div img
         handPos += " img";
 
@@ -89,18 +71,15 @@ function selectPieces() {
             snapMode: "both",
             snapTolerance: 50,
             drag: function (event, ui) {
-                
+
             }
         });
 
         //move to next handpos
-        tmp++
+        tmp++;
         //one less tile needed
         tilesNeeded--;
-        //tileid is class to add to piece corresponding to rackpos
-        tileid++;
     }
-    vacancies.removeClass('empty');
 }
 
 function setupBoard() {
@@ -119,17 +98,12 @@ function setupBoard() {
 
             $(ui.draggable).addClass('onboard');
             $(ui.draggable).attr("id", posOnBoard);
-           
-            
+
             var string = $(ui.draggable).attr("class");
             var rackpos = parseInt(string.substring(6, 9));
             console.log("add empty to rack pos: " + rackpos);
             $('#' + rackpos).addClass('empty');
-           
-
-
         }
-        //out: Drag
     });
 
     $(".rack").droppable({
@@ -138,8 +112,7 @@ function setupBoard() {
             $(ui.draggable).removeClass('onboard');
             $(this).removeClass('empty');
         }
-        //drop: Drop,
-        //out: Drag
+
     });
 
     img = "<img src='images/board/tiles_empty.png' />";
@@ -288,7 +261,7 @@ function lookup(word) {
                 $("img.onboard").draggable('disable');
                 calculateScore(word);
                 turn++;
-                selectPieces();
+                newHand();
             }
 
         } else
@@ -299,7 +272,7 @@ function lookup(word) {
 }
 
 var totalScore = 0;
-    
+
 function calculateScore(word) {
 
     var onboardPieces = $(".onboard");
@@ -318,7 +291,7 @@ function calculateScore(word) {
             var dw = true;
         } else if (posArr[j] === 4) {
             var dlAt4 = j;
-            
+
         } else if (posArr[j] === 12) {
             var dlAt12 = j;
 
@@ -337,22 +310,64 @@ function calculateScore(word) {
                 break;
             }
         }
-        console.log("The score was: " + score);  
+        console.log("The score was: " + score);
         if (dlAt4 === i)
             score += value
-        if (dlAt12 === i )
+        if (dlAt12 === i)
             score += value;
-          
+
         score += value;
         console.log("The score is: " + score);
     }
     if (dw)
         score *= 3;
 
-        totalScore += score;
+    totalScore += score;
     $('h2').text("Score: " + totalScore);
+}
 
-    
-    
+function newHand() {
+    var onboardPieces = $(".onboard");
+    var size = $('.onboard').length;
+    var rackpos;
+
+    console.log("the size is: " + size);
+
+    for (i = 0; i < size; i++) {
+
+        console.log("missing tiles class: " + onboardPieces[i].className);
+        rackpos = parseInt(onboardPieces[i].className.substring(6, 9));
+        console.log(rackpos);
+        $("#" + rackpos + " img").remove();
+
+        //generate random number to get random tile
+        var randomNum = Math.floor(Math.random() * 27);
+        //if we have no more of that tile get another random number
+        while (ScrabbleTiles[randomNum].number_remaining == 0) {
+            randomNum = Math.floor(Math.random() * 26)
+        }
+
+        //when we find a tile with some remaining decrement it
+        ScrabbleTiles[randomNum].number_remaining--;
+        //create the tile 'letter_(char).png'
+        var tilename =
+            "<img src='images/tiles/letter_" + ScrabbleTiles[randomNum].letter + ".png' class='piece' />";
+
+        $("#" + rackpos).append(tilename);
+
+        //add position on rack to the piece on the rack
+        $("#" + rackpos + " img").addClass(rackpos.toString());
+
+        //make the images draggable
+        $("#" + rackpos + " img").draggable({
+            revert: 'invalid',
+            snap: '.boardTile, .rack',
+            snapMode: "both",
+            snapTolerance: 50,
+            drag: function (event, ui) {
+
+            }
+        });
+    }
 }
 
