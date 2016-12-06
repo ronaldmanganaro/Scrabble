@@ -246,7 +246,7 @@ function lookup(word) {
     var xmlRequest = "https://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + word + "?key=" + apikey;
     var xhttp = new XMLHttpRequest();
 
-
+/*
         $.ajax({
         type: "GET",
         url: xmlRequest,
@@ -258,7 +258,7 @@ function lookup(word) {
             alert(xhr.response);
         }
     });
-/*
+*/
 
 
     xhttp.onload = function () {
@@ -284,7 +284,7 @@ function lookup(word) {
             console.log("error api call");
     };
     xhttp.open("GET", xmlRequest, true);
-    xhttp.send(null);*/
+    xhttp.send(null);
 }
 
 var totalScore = 0;
