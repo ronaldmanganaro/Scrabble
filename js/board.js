@@ -243,8 +243,24 @@ function checkWord() {
 
 function lookup(word) {
     var apikey = "6574d3d5-aa7a-4a8a-9063-e312b096015f";
-    var xmlRequest = "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + word + "?key=" + apikey;
+    var xmlRequest = "https://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + word + "?key=" + apikey;
     var xhttp = new XMLHttpRequest();
+
+
+        $.ajax({
+        type: "GET",
+        url: xmlRequest,
+        data:{q:idiom},
+        async:true,
+        dataType : 'jsonp',   //you may use jsonp for cross origin request
+        crossDomain:true,
+        success: function(data, status, xhr) {
+            alert(xhr.response);
+        }
+    });
+/*
+
+
     xhttp.onload = function () {
         if (xhttp.status == 200) {
             // Action to be performed when the document is read;
@@ -268,7 +284,7 @@ function lookup(word) {
             console.log("error api call");
     };
     xhttp.open("GET", xmlRequest, true);
-    xhttp.send(null);
+    xhttp.send(null);*/
 }
 
 var totalScore = 0;
